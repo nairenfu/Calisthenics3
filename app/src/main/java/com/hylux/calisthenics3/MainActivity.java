@@ -1,11 +1,17 @@
 package com.hylux.calisthenics3;
 
+import android.app.Activity;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
     CreateRoutineFragment createRoutineFragment;
     RoutineListFragment routineListFragment;
     FragmentManager fm;
+    ScrollingPagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
 
         fm = this.getSupportFragmentManager();
 
+        //----------- MATCHING LOCAL DATABASE WITH FIRE_BASE ----------------------------------------------------------------------------------------------------------------
         db = FirebaseFirestore.getInstance();
         db.collection("exercises")
                 .get()
@@ -43,19 +51,72 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                                 Log.d("DB", document.getId() + " => " + document.getData());
                                 DatabaseInterface.exerciseList.put(document.getId(), new Exercise((HashMap<String, Object>) document.getData()));
                             }
-                            createRoutineFragment = (CreateRoutineFragment) fm.findFragmentByTag("crf");
-                            if (fm.findFragmentByTag("crf") == null) {
-                                createRoutineFragment = new CreateRoutineFragment();
-                                fm.beginTransaction().add(R.id.mainActivity, createRoutineFragment, "crf").commit();
-                                Log.d("FRAGMENTS", fm.getFragments().toString());
-                            }
-                            Log.d("FRAGMENTS", fm.getFragments().toString());
+                            createRoutineFragment.getExerciseListFragment().updateData();
                         } else {
                             Log.w("DB", "Error getting documents.", task.getException());
                         }
                     }
                 });
+
+        db.collection("routines")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Log.d("DB", document.getId() + " => " + document.getData());
+                                DatabaseInterface.routineList.put(document.getId(), new Routine((HashMap<String, Object>) document.getData()));
+                            }
+                            routineListFragment.updateData();
+                        } else {
+                            Log.w("DB", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
         Log.d("FRAGMENT", fm.getFragments().toString());
+
+        ViewPager viewPager = findViewById(R.id.mainActivity);
+        pagerAdapter = new ScrollingPagerAdapter(fm);
+        viewPager.setAdapter(pagerAdapter);
+    }
+
+    public class ScrollingPagerAdapter extends FragmentPagerAdapter {
+        private int numPages = 2;
+
+        public ScrollingPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch (i) {
+                case 0:
+                    createRoutineFragment = (CreateRoutineFragment) fm.findFragmentByTag(
+                            "android:switcher:" + R.id.mainActivity + ":" + 0);
+                    if (fm.findFragmentByTag("android:switcher:" + R.id.mainActivity + ":" + 0) == null) {
+                        createRoutineFragment = new CreateRoutineFragment();
+                    }
+                    return createRoutineFragment;
+
+                case 1:
+                    routineListFragment = (RoutineListFragment) fm.findFragmentByTag(
+                            "android:switcher:" + R.id.mainActivity + ":" + 1);
+                    if (fm.findFragmentByTag("android:switcher:" + R.id.mainActivity + ":" + 1) == null) {
+                        routineListFragment = new RoutineListFragment();
+                    }
+                    return routineListFragment;
+
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return numPages;
+        }
     }
 
     //----------- CREATE ROUTINE FRAGMENT --------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,21 +165,21 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                                 Log.d("DB", document.getId() + " => " + document.getData());
                                 DatabaseInterface.routineList.put(document.getId(), new Routine((HashMap<String, Object>) document.getData()));
                             }
-                            routineListFragment = (RoutineListFragment) fm.findFragmentByTag("rlf");
-                            if (fm.findFragmentByTag("crf") == null) {
-                                routineListFragment = new RoutineListFragment();
-                                fm.beginTransaction().add(R.id.mainActivity, routineListFragment, "rlf").commit();
-                                Log.d("FRAGMENTS", fm.getFragments().toString());
-                            }
-                            /*else {
-                                fm.beginTransaction().remove(routineListFragment).add(R.id.mainActivity, routineListFragment, "rlf").commit();
-                            }*/
-                            Log.d("FRAGMENTS", fm.getFragments().toString());
-                            Log.d("ROUTINES", DatabaseInterface.routineList.toString());
+                            routineListFragment.updateData();
                         } else {
                             Log.w("DB", "Error getting documents.", task.getException());
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onHideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = getCurrentFocus();
+        if (view == null) {
+            view = new View(getApplicationContext());
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

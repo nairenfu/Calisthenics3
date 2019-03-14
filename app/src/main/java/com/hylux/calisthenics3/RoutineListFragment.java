@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,30 +49,16 @@ public class RoutineListFragment extends Fragment {
 
         keyList = new ArrayList<>(DatabaseInterface.routineList.keySet());
 
-        adapter = new RecyclerView.Adapter() {
-            @NonNull
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                TextView v = (TextView) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sample_exercise_text_view, viewGroup, false);
-                return new RecyclerView.ViewHolder(v) {
-                };
-                }
-
-            @Override
-            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final String key = keyList.get(i);
-                ((TextView) viewHolder.itemView).setText(DatabaseInterface.routineList.get(key).toString());
-            }
-
-            @Override
-            public int getItemCount() {
-                return DatabaseInterface.routineList.size();
-            }
-        };
+        adapter = new RoutineListAdapter(DatabaseInterface.routineList);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
         return rootView;
+    }
+
+    public void updateData() {
+        Log.d("UPDATE", String.valueOf(adapter.getItemCount()));
+        ((RoutineListAdapter) adapter).updateAdapter(DatabaseInterface.routineList);
     }
 
 }

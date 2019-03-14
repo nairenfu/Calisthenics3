@@ -66,6 +66,11 @@ public class ExerciseListFragment extends Fragment {
         onUpdateListener = null;
     }
 
+    public void updateData() {
+        Log.d("UPDATE", String.valueOf(adapter.getItemCount()));
+        ((ExerciseAdapter) adapter).updateAdapter(DatabaseInterface.exerciseList);
+    }
+
     public DatabaseInterface getOnUpdateListener() {
         return this.onUpdateListener;
     }

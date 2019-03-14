@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -41,7 +42,7 @@ public class EditRoutineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_edit_routine, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_edit_routine, container, false);
 
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -62,6 +63,7 @@ public class EditRoutineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 addRoutine(currentId, setName.getText().toString());
+                onUpdateListener.onHideKeyboard();
             }
         });
 

@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public interface DatabaseInterface {
     HashMap<String, Exercise> exerciseList = new HashMap<>();
-    HashMap<String, Object> routineList = new HashMap<>();
+    HashMap<String, Routine> routineList = new HashMap<>();
 
     ArrayList<String> MuscleGroups = new ArrayList<>(Arrays.asList(
             "none",
@@ -23,4 +23,5 @@ public interface DatabaseInterface {
 
     void onExerciseSelected(String id);
     void onRoutineAdded(String id, String name, ArrayList<HashMap<String, Integer>> routine);
+    void onHideKeyboard();
 }

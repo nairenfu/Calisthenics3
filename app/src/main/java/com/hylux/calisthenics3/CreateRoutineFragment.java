@@ -69,6 +69,10 @@ public class CreateRoutineFragment extends Fragment {
         onUpdateListener = null;
     }
 
+    public ExerciseListFragment getExerciseListFragment() {
+        return exerciseListFragment;
+    }
+
     public EditRoutineFragment getEditRoutineFragment() {
         return editRoutineFragment;
     }

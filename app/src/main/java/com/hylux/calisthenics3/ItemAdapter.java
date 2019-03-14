@@ -33,6 +33,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         keyList = new ArrayList<>(dataSet.keySet());
     }
 
+    public void updateAdapter(HashMap<String, Exercise> dataSet) {
+        this.dataSet = dataSet;
+        keyList = new ArrayList<>(dataSet.keySet());
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

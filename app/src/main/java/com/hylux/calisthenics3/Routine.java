@@ -46,7 +46,10 @@ public class Routine {
     public Routine(HashMap<String, Object> routine) {
         this.name = (String) routine.get("name");
         this.routine = (ArrayList<HashMap<String, Integer>>) routine.get("routine");
-        this.equipment = new ArrayList<>();
+        this.equipment = (ArrayList<Long>) routine.get("equipment");
+        this.aim = (ArrayList<Long>) routine.get("aim");
+
+        /*this.equipment = new ArrayList<>();
         this.aim = new ArrayList<>();
 
         for (HashMap<String, Integer> set : this.routine) {
@@ -66,7 +69,7 @@ public class Routine {
                     Log.d("AIMS", this.aim.toString());
                 }
             }
-        }
+        }*/
     }
 
     public String getName() {
@@ -75,6 +78,22 @@ public class Routine {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ArrayList<Long> getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(ArrayList<Long> equipment) {
+        this.equipment = equipment;
+    }
+
+    public ArrayList<Long> getAim() {
+        return aim;
+    }
+
+    public void setAim(ArrayList<Long> aim) {
+        this.aim = aim;
     }
 
     public ArrayList<HashMap<String, Integer>> getRoutine() {
