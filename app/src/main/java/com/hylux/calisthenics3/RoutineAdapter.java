@@ -1,35 +1,64 @@
 package com.hylux.calisthenics3;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.hylux.calisthenics3.DatabaseInterface.currentRoutine;
+
 public class RoutineAdapter extends ItemAdapter {
 
-    private int defaultReps = 10;
-    private ArrayList<HashMap<String,Integer>> currentRoutine;
+    private RoutineAdapter self;
 
-    public RoutineAdapter(HashMap<String, Exercise> dataSet) {
-        super(dataSet);
-        currentRoutine = new ArrayList<>();
+    private int defaultReps = 10;
+
+    private HashMap<String, Integer> set;
+
+    public RoutineAdapter(Fragment parentFragment, HashMap<String, Exercise> dataSet) {
+        super(parentFragment, dataSet);
+        Log.d("ROUTINE_ADAPTER", dataSet.toString());
+        Log.d("ROUTINE_KEY_LIST", getKeyList().toString());
+        self = this;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder itemViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ItemViewHolder itemViewHolder, int i) {
         final int index = i;
         final String key = getKeyList().get(i);
         itemViewHolder.textView.setText(getDataSet().get(key).getName());
         itemViewHolder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HashMap<String, Integer> set = new HashMap<>();
+                set = new HashMap<>();
                 set.put(key, defaultReps + 10);
                 Log.d("RECYCLER_VIEW", "CLICKED " + key);
                 currentRoutine.set(index, set);
                 currentRoutine.set(index, set);
+
+                FrameLayout parentView = (FrameLayout) getParentFragment().getView();
+
+                RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(8, 8, 8, 8);
+
+                View configSetView = View.inflate(getParentFragment().getContext(), R.layout.view_config_set, (ViewGroup) itemViewHolder.itemView);
+                //configSetView.setLayoutParams(params);
+                new ConfigSetController(self, configSetView, key);
+
+                Log.d("VIEWS", parentView.toString());
+                for(int index=0; index<(parentView.getChildCount()); ++index) {
+                    View nextChild = parentView.getChildAt(index);
+                    Log.d("VIEW", nextChild.toString());
+                }
             }
         });
     }
@@ -42,7 +71,6 @@ public class RoutineAdapter extends ItemAdapter {
         Log.d("ROUTINE_SET", set.toString());
         currentRoutine.add(set);
         Log.d("ROUTINE", currentRoutine.toString());
-
         Log.d("ROUTINE", getDataSet().toString());
         Log.d("ROUTINE", getKeyList().toString());
         Log.d("ROUTINE", String.valueOf(this.getItemCount()));
@@ -51,13 +79,19 @@ public class RoutineAdapter extends ItemAdapter {
 
     public void addRoutine(String currentId, String name) {
         getOnUpdateListener().onRoutineAdded(currentId, name, currentRoutine);
+        currentRoutine.clear();
+        Log.d("ROUTINE", currentRoutine.toString());
     }
 
     public ArrayList<HashMap<String, Integer>> getCurrentRoutine() {
         return currentRoutine;
     }
 
-    public void setCurrentRoutine(ArrayList<HashMap<String, Integer>> currentRoutine) {
-        this.currentRoutine = currentRoutine;
+    public HashMap<String, Integer> getSet() {
+        return set;
+    }
+
+    public void setSet(HashMap<String, Integer> set) {
+        this.set = set;
     }
 }

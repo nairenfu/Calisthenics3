@@ -28,8 +28,9 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
 
     FirebaseFirestore db;
     CreateRoutineFragment createRoutineFragment;
-    RoutineListFragment routineListFragment;
+    ExploreFragment exploreFragment;
     FragmentManager fm;
+    ViewPager viewPager;
     ScrollingPagerAdapter pagerAdapter;
 
     @Override
@@ -41,45 +42,23 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
 
         //----------- MATCHING LOCAL DATABASE WITH FIRE_BASE ----------------------------------------------------------------------------------------------------------------
         db = FirebaseFirestore.getInstance();
-        db.collection("exercises")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Log.d("DB", document.getId() + " => " + document.getData());
-                                DatabaseInterface.exerciseList.put(document.getId(), new Exercise((HashMap<String, Object>) document.getData()));
-                            }
-                            createRoutineFragment.getExerciseListFragment().updateData();
-                        } else {
-                            Log.w("DB", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-        db.collection("routines")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Log.d("DB", document.getId() + " => " + document.getData());
-                                DatabaseInterface.routineList.put(document.getId(), new Routine((HashMap<String, Object>) document.getData()));
-                            }
-                            routineListFragment.updateData();
-                        } else {
-                            Log.w("DB", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        updateExercises(db);
+        updateRoutines(db);
 
         Log.d("FRAGMENT", fm.getFragments().toString());
 
-        ViewPager viewPager = findViewById(R.id.mainActivity);
+        viewPager = findViewById(R.id.mainActivity);
         pagerAdapter = new ScrollingPagerAdapter(fm);
         viewPager.setAdapter(pagerAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("FRAGMENTS", fm.getFragments().toString());
+        fm.popBackStackImmediate();
+        if (viewPager.getCurrentItem() == 1) {
+            exploreFragment.back();
+        }
     }
 
     public class ScrollingPagerAdapter extends FragmentPagerAdapter {
@@ -101,12 +80,12 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                     return createRoutineFragment;
 
                 case 1:
-                    routineListFragment = (RoutineListFragment) fm.findFragmentByTag(
+                    exploreFragment = (ExploreFragment) fm.findFragmentByTag(
                             "android:switcher:" + R.id.mainActivity + ":" + 1);
                     if (fm.findFragmentByTag("android:switcher:" + R.id.mainActivity + ":" + 1) == null) {
-                        routineListFragment = new RoutineListFragment();
+                        exploreFragment = new ExploreFragment();
                     }
-                    return routineListFragment;
+                    return exploreFragment;
 
                 default:
                     return null;
@@ -119,12 +98,59 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
         }
     }
 
+    //----------- COLLECTION METHODS -------------------------------------------------------------------------------------------------------------------------------------------------
+    public void updateExercises(FirebaseFirestore db) {
+        db.collection("exercises")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Log.d("DB", document.getId() + " => " + document.getData());
+                                DatabaseInterface.exerciseList.put(document.getId(), new Exercise((HashMap<String, Object>) document.getData()));
+                            }
+                            createRoutineFragment.getExerciseListFragment().updateData();
+                        } else {
+                            Log.w("DB", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public void updateRoutines(FirebaseFirestore db) {
+        db.collection("routines")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Log.d("DB", document.getId() + " => " + document.getData());
+                                DatabaseInterface.routineList.put(document.getId(), new Routine((HashMap<String, Object>) document.getData()));
+                            }
+                            exploreFragment.updateData();
+                            createRoutineFragment.getRoutineListFragment().updateData();
+                        } else {
+                            Log.w("DB", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+    }
+
     //----------- CREATE ROUTINE FRAGMENT --------------------------------------------------------------------------------------------------------------------------------------------
 
     @Override
     public void onExerciseSelected(String id) {
         Log.d("INTERFACE", "DING DONG INTERFACE CALLED");
-        createRoutineFragment.getEditRoutineFragment().addExercise(id);
+        //createRoutineFragment.getEditRoutineFragment().addExercise(id);
+        //HashMap<String, Integer> exercise = new HashMap<>();
+        //exercise.put(id, 10);
+        //DatabaseInterface.currentRoutine.add(exercise);
+        if (exploreFragment.getEditFragment().getClass() == CreateRoutineFragment.class) {
+            ((CreateRoutineFragment) exploreFragment.getEditFragment()).getEditRoutineFragment().addExercise(id);
+        }
+        Log.d("ROUTINE", DatabaseInterface.currentRoutine.toString());
     }
 
     @Override
@@ -155,22 +181,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                     });
         }
 
-        db.collection("routines")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Log.d("DB", document.getId() + " => " + document.getData());
-                                DatabaseInterface.routineList.put(document.getId(), new Routine((HashMap<String, Object>) document.getData()));
-                            }
-                            routineListFragment.updateData();
-                        } else {
-                            Log.w("DB", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        updateRoutines(db);
     }
 
     @Override

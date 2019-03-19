@@ -1,11 +1,13 @@
 package com.hylux.calisthenics3;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -13,22 +15,27 @@ import java.util.HashMap;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
+    private Fragment parentFragment;
+
     private HashMap<String, Exercise> dataSet;
     private ArrayList<String> keyList;
 
     private DatabaseInterface onUpdateListener;
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        public LinearLayout parentView;
         public TextView textView;
         public String id;
 
-        public ItemViewHolder(TextView v) {
+        public ItemViewHolder(LinearLayout v) {
             super(v);
-            textView = v;
+            parentView = v;
+            textView = v.findViewById(R.id.textView3);
         }
     }
 
-    public ItemAdapter(HashMap<String, Exercise> dataSet) {
+    public ItemAdapter(Fragment parentFragment, HashMap<String, Exercise> dataSet) {
+        this.parentFragment = parentFragment;
         this.dataSet = dataSet;
         keyList = new ArrayList<>(dataSet.keySet());
     }
@@ -43,7 +50,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-        TextView v = (TextView) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sample_exercise_text_view, viewGroup, false);
+        LinearLayout v = (LinearLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sample_exercise_text_view, viewGroup, false);
         return new ItemViewHolder(v);
     }
 
@@ -56,6 +63,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     @Override
     public int getItemCount() {
         return keyList.size();
+    }
+
+    public Fragment getParentFragment() {
+        return parentFragment;
+    }
+
+    public void setParentFragment(Fragment parentFragment) {
+        this.parentFragment = parentFragment;
     }
 
     public void setOnUpdateListener(DatabaseInterface onUpdateListener) {

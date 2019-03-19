@@ -1,6 +1,7 @@
 package com.hylux.calisthenics3;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 
@@ -8,8 +9,8 @@ import java.util.HashMap;
 
 public class ExerciseAdapter extends ItemAdapter {
 
-    public ExerciseAdapter(HashMap<String, Exercise> dataSet) {
-        super(dataSet);
+    public ExerciseAdapter(Fragment parentFragment, HashMap<String, Exercise> dataSet) {
+        super(parentFragment, dataSet);
     }
 
     @Override
@@ -19,7 +20,7 @@ public class ExerciseAdapter extends ItemAdapter {
         itemViewHolder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("RECYCLER_VIEW", "CLICKED " + key);
+                Log.d("EXERCISE_ADAPTER", "CLICKED " + key);
                 getOnUpdateListener().onExerciseSelected(key);
             }
         });

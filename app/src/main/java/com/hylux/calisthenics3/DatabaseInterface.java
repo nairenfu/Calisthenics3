@@ -8,6 +8,7 @@ import java.util.HashMap;
 public interface DatabaseInterface {
     HashMap<String, Exercise> exerciseList = new HashMap<>();
     HashMap<String, Routine> routineList = new HashMap<>();
+    ArrayList<HashMap<String,Integer>> currentRoutine = new ArrayList<>();
 
     ArrayList<String> MuscleGroups = new ArrayList<>(Arrays.asList(
             "none",

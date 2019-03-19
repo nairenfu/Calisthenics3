@@ -48,28 +48,6 @@ public class Routine {
         this.routine = (ArrayList<HashMap<String, Integer>>) routine.get("routine");
         this.equipment = (ArrayList<Long>) routine.get("equipment");
         this.aim = (ArrayList<Long>) routine.get("aim");
-
-        /*this.equipment = new ArrayList<>();
-        this.aim = new ArrayList<>();
-
-        for (HashMap<String, Integer> set : this.routine) {
-            String key = (String) set.keySet().toArray()[0];
-            Log.d("KEY", key);
-            long equipmentForSet = DatabaseInterface.exerciseList.get(key).getEquipment();
-            Log.d("EQUIPMENT", String.valueOf(equipmentForSet));
-            if (!equipment.contains(equipmentForSet)) {
-                equipment.add(equipmentForSet);
-                Log.d("EQUIPMENTS", equipment.toString());
-            }
-            ArrayList<Long> aimForSet = DatabaseInterface.exerciseList.get(key).getAim();
-            Log.d("AIM", aimForSet.toString());
-            for (long aim : aimForSet) {
-                if (!this.aim.contains(aim)) {
-                    this.aim.add(aim);
-                    Log.d("AIMS", this.aim.toString());
-                }
-            }
-        }*/
     }
 
     public String getName() {

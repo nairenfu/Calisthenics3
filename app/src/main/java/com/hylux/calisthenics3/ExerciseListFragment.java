@@ -12,9 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-
-import java.util.ArrayList;
 
 public class ExerciseListFragment extends Fragment {
 
@@ -41,7 +38,7 @@ public class ExerciseListFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new ExerciseAdapter(DatabaseInterface.exerciseList);
+        adapter = new ExerciseAdapter(this, DatabaseInterface.exerciseList);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         ((ExerciseAdapter) adapter).setOnUpdateListener(onUpdateListener);

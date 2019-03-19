@@ -50,9 +50,9 @@ public class EditRoutineFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        HashMap<String, Exercise> testSet = new HashMap<String, Exercise>();
+        HashMap<String, Exercise> testSet = new HashMap<>();
         //testSet.put("P90unQ7HjFw7ei7Z8HCn", new Exercise("a", "b", "c"));
-        adapter = new RoutineAdapter(testSet);
+        adapter = new RoutineAdapter(this, testSet);
         recyclerView.setAdapter(adapter);
         ((RoutineAdapter) adapter).setOnUpdateListener(onUpdateListener);
         adapter.notifyDataSetChanged();
@@ -103,5 +103,9 @@ public class EditRoutineFragment extends Fragment {
 
     public void addRoutine(String currentId, String name) {
         ((RoutineAdapter) adapter).addRoutine(currentId, name);
+    }
+
+    public RecyclerView.Adapter getAdapter() {
+        return adapter;
     }
 }
