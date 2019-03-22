@@ -18,7 +18,7 @@ public class CreateRoutineFragment extends Fragment {
     private FragmentManager fm;
     private ExerciseListFragment exerciseListFragment;
     private EditRoutineFragment editRoutineFragment;
-    private RoutineListFragment routineListFragment;
+    //private RoutineListFragment routineListFragment;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,11 +52,11 @@ public class CreateRoutineFragment extends Fragment {
             fm.beginTransaction().add(R.id.editRoutineContainer, editRoutineFragment, "erf").commit();
         }
 
-        routineListFragment = (RoutineListFragment) fm.findFragmentByTag("rlf");
+        /*routineListFragment = (RoutineListFragment) fm.findFragmentByTag("rlf");
         if (routineListFragment == null) {
             routineListFragment = new RoutineListFragment();
             fm.beginTransaction().add(R.id.routineListContainer, routineListFragment, "rlf").commit();
-        }
+        }*/
     }
 
     @Override
@@ -84,7 +84,7 @@ public class CreateRoutineFragment extends Fragment {
         return editRoutineFragment;
     }
 
-    public RoutineListFragment getRoutineListFragment() {
+    /*public RoutineListFragment getRoutineListFragment() {
         return routineListFragment;
-    }
+    }*/
 }

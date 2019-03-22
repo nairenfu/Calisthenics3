@@ -1,8 +1,12 @@
 package com.hylux.calisthenics3;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,12 +16,15 @@ import java.util.HashMap;
 
 public class RoutineListAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
+    Fragment parentFragment;
+
     private HashMap<String, Routine> dataSet;
     private ArrayList<String> keyList;
 
-    public RoutineListAdapter(HashMap<String, Routine> dataSet) {
+    public RoutineListAdapter(Fragment parentFragment, HashMap<String, Routine> dataSet) {
         this.dataSet = dataSet;
         this.keyList = new ArrayList<>(dataSet.keySet());
+        this.parentFragment = parentFragment;
     }
 
     @NonNull
@@ -28,9 +35,19 @@ public class RoutineListAdapter extends RecyclerView.Adapter<ItemAdapter.ItemVie
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemAdapter.ItemViewHolder itemViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ItemAdapter.ItemViewHolder itemViewHolder, int i) {
         final String key = keyList.get(i);
         itemViewHolder.textView.setText(dataSet.get(key).getName());
+        itemViewHolder.textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("POSITION", String.valueOf(itemViewHolder.getAdapterPosition()));
+                Log.d("KEY", key);
+
+                FragmentManager fm = parentFragment.getChildFragmentManager();
+                fm.beginTransaction().add(R.id.frameLayout, WorkoutOverviewFragment.newInstance(key)).commit();
+            }
+        });
     }
 
     @Override

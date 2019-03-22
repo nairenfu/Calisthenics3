@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Exercise {
+public class Exercise extends Object {
 
     private String name, brief, pathToVideo;
     private ArrayList<String> pathsToImages;

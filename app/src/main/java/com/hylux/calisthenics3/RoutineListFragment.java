@@ -49,7 +49,7 @@ public class RoutineListFragment extends Fragment {
 
         keyList = new ArrayList<>(DatabaseInterface.routineList.keySet());
 
-        adapter = new RoutineListAdapter(DatabaseInterface.routineList);
+        adapter = new RoutineListAdapter(this, DatabaseInterface.routineList);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 

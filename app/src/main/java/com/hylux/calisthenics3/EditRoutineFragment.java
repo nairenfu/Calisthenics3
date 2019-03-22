@@ -63,7 +63,11 @@ public class EditRoutineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 addRoutine(currentId, setName.getText().toString());
-                onUpdateListener.onHideKeyboard();
+                try {
+                    onUpdateListener.onHideKeyboard();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -103,6 +107,7 @@ public class EditRoutineFragment extends Fragment {
 
     public void addRoutine(String currentId, String name) {
         ((RoutineAdapter) adapter).addRoutine(currentId, name);
+        ((ExploreFragment) getParentFragment().getParentFragment()).back();
     }
 
     public RecyclerView.Adapter getAdapter() {

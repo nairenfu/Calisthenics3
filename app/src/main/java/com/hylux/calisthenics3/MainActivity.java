@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                             }
                             try {
                                 exploreFragment.updateData();
-                                createRoutineFragment.getRoutineListFragment().updateData();
+                                //createRoutineFragment.getRoutineListFragment().updateData();
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
