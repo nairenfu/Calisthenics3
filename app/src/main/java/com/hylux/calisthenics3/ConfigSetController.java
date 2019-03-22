@@ -1,5 +1,6 @@
 package com.hylux.calisthenics3;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -9,7 +10,7 @@ import android.widget.LinearLayout;
 
 public class ConfigSetController {
 
-    public ConfigSetController(final RoutineAdapter parentAdapter, final View parentLayout, final String key) {
+    public ConfigSetController(final RoutineAdapter parentAdapter, final View parentLayout, final String key, final int index) {
 
         final EditText editReps = parentLayout.findViewById(R.id.editReps);
 
@@ -17,8 +18,21 @@ public class ConfigSetController {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                parentAdapter.getSet().put(key, Integer.valueOf(editReps.getText().toString()));
-                ((ViewGroup) parentLayout.getRootView()).removeView(parentLayout);
+                try {
+                    parentAdapter.getSet().put(key, Integer.valueOf(editReps.getText().toString()));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("VIEWS", parentLayout.toString());
+                for(int index=0; index<(((ViewGroup) parentLayout).getChildCount()); ++index) {
+                    View nextChild = ((ViewGroup) parentLayout).getChildAt(index);
+                    Log.d("VIEW", nextChild.toString());
+                }
+
+                ((ViewGroup) parentLayout.getParent()).removeView(parentLayout);
+                parentAdapter.setHasConfigView(false);
+                Log.d("HASCONFIGVIEW", String.valueOf(parentAdapter.isHasConfigView()));
             }
         });
 
@@ -26,7 +40,10 @@ public class ConfigSetController {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                parentAdapter.removeExercise(index);
+                ((ViewGroup) parentLayout.getParent()).removeView(parentLayout);
+                parentAdapter.setHasConfigView(false);
+                Log.d("HASCONFIGVIEW", String.valueOf(parentAdapter.isHasConfigView()));
             }
         });
     }

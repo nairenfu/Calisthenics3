@@ -110,7 +110,11 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                                 Log.d("DB", document.getId() + " => " + document.getData());
                                 DatabaseInterface.exerciseList.put(document.getId(), new Exercise((HashMap<String, Object>) document.getData()));
                             }
-                            createRoutineFragment.getExerciseListFragment().updateData();
+                            try {
+                                createRoutineFragment.getExerciseListFragment().updateData();
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             Log.w("DB", "Error getting documents.", task.getException());
                         }
@@ -129,8 +133,12 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                                 Log.d("DB", document.getId() + " => " + document.getData());
                                 DatabaseInterface.routineList.put(document.getId(), new Routine((HashMap<String, Object>) document.getData()));
                             }
-                            exploreFragment.updateData();
-                            createRoutineFragment.getRoutineListFragment().updateData();
+                            try {
+                                exploreFragment.updateData();
+                                createRoutineFragment.getRoutineListFragment().updateData();
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             Log.w("DB", "Error getting documents.", task.getException());
                         }

@@ -23,6 +23,10 @@ public class RoutineAdapter extends ItemAdapter {
 
     private HashMap<String, Integer> set;
 
+    private int spawnedIndex;
+
+    private boolean hasConfigView = false;
+
     public RoutineAdapter(Fragment parentFragment, HashMap<String, Exercise> dataSet) {
         super(parentFragment, dataSet);
         Log.d("ROUTINE_ADAPTER", dataSet.toString());
@@ -38,11 +42,13 @@ public class RoutineAdapter extends ItemAdapter {
         itemViewHolder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                set = new HashMap<>();
+                spawnedIndex = itemViewHolder.getAdapterPosition();
+                Log.d("POSITION", String.valueOf(spawnedIndex));
+                /*set = new HashMap<>();
                 set.put(key, defaultReps + 10);
                 Log.d("RECYCLER_VIEW", "CLICKED " + key);
                 currentRoutine.set(index, set);
-                currentRoutine.set(index, set);
+                currentRoutine.set(index, set);*/
 
                 FrameLayout parentView = (FrameLayout) getParentFragment().getView();
 
@@ -50,14 +56,12 @@ public class RoutineAdapter extends ItemAdapter {
                         FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins(8, 8, 8, 8);
 
-                View configSetView = View.inflate(getParentFragment().getContext(), R.layout.view_config_set, (ViewGroup) itemViewHolder.itemView);
-                //configSetView.setLayoutParams(params);
-                new ConfigSetController(self, configSetView, key);
-
-                Log.d("VIEWS", parentView.toString());
-                for(int index=0; index<(parentView.getChildCount()); ++index) {
-                    View nextChild = parentView.getChildAt(index);
-                    Log.d("VIEW", nextChild.toString());
+                Log.d("HASCONFIGVIEW", String.valueOf(hasConfigView));
+                if (!hasConfigView) {
+                    View configSetView = View.inflate(getParentFragment().getContext(), R.layout.view_config_set, (ViewGroup) itemViewHolder.itemView);
+                    //configSetView.setLayoutParams(params);
+                    new ConfigSetController(self, configSetView, key, spawnedIndex);
+                    hasConfigView = true;
                 }
             }
         });
@@ -77,6 +81,16 @@ public class RoutineAdapter extends ItemAdapter {
         notifyDataSetChanged();
     }
 
+    public void removeExercise(int updatedIndex) {
+        getKeyList().remove(updatedIndex);
+        currentRoutine.remove(updatedIndex);
+        Log.d("ROUTINE", currentRoutine.toString());
+        Log.d("ROUTINE", getDataSet().toString());
+        Log.d("ROUTINE", getKeyList().toString());
+        Log.d("ROUTINE", String.valueOf(this.getItemCount()));
+        notifyItemRemoved(updatedIndex);
+    }
+
     public void addRoutine(String currentId, String name) {
         getOnUpdateListener().onRoutineAdded(currentId, name, currentRoutine);
         currentRoutine.clear();
@@ -93,5 +107,13 @@ public class RoutineAdapter extends ItemAdapter {
 
     public void setSet(HashMap<String, Integer> set) {
         this.set = set;
+    }
+
+    public boolean isHasConfigView() {
+        return hasConfigView;
+    }
+
+    public void setHasConfigView(boolean hasConfigView) {
+        this.hasConfigView = hasConfigView;
     }
 }
