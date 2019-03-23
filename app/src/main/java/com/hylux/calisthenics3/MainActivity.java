@@ -27,7 +27,7 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements DatabaseInterface {
 
     FirebaseFirestore db;
-    CreateRoutineFragment createRoutineFragment;
+    StartWorkoutFragment startWorkoutFragment;
     ExploreFragment exploreFragment;
     FragmentManager fm;
     ViewPager viewPager;
@@ -72,12 +72,12 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    createRoutineFragment = (CreateRoutineFragment) fm.findFragmentByTag(
+                    startWorkoutFragment = (StartWorkoutFragment) fm.findFragmentByTag(
                             "android:switcher:" + R.id.mainActivity + ":" + 0);
                     if (fm.findFragmentByTag("android:switcher:" + R.id.mainActivity + ":" + 0) == null) {
-                        createRoutineFragment = new CreateRoutineFragment();
+                        startWorkoutFragment = new StartWorkoutFragment();
                     }
-                    return createRoutineFragment;
+                    return startWorkoutFragment;
 
                 case 1:
                     exploreFragment = (ExploreFragment) fm.findFragmentByTag(
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                                 DatabaseInterface.exerciseList.put(document.getId(), new Exercise((HashMap<String, Object>) document.getData()));
                             }
                             try {
-                                createRoutineFragment.getExerciseListFragment().updateData();
+                                exploreFragment.updateData();
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
@@ -167,9 +167,9 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
         Routine routineMap = new Routine(name, routine);
         Log.d("ROUTINE", routineMap.toString());
 
-        if (!createRoutineFragment.getEditRoutineFragment().getCurrentId().equals("")) {
+        if (!exploreFragment.getEditFragment().getEditRoutineFragment().getCurrentId().equals("")) {
             db.collection("routines")
-                    .document(createRoutineFragment.getEditRoutineFragment().getCurrentId())
+                    .document(exploreFragment.getEditFragment().getEditRoutineFragment().getCurrentId())
                     .set(routineMap)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -184,7 +184,11 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                         @Override
                         public void onComplete(@NonNull Task<DocumentReference> task) {
                             Log.d("ROUTINE", task.getResult().getId());
-                            createRoutineFragment.getEditRoutineFragment().setCurrentId(task.getResult().getId());
+                            try {
+                                exploreFragment.getEditFragment().getEditRoutineFragment().setCurrentId(task.getResult().getId());
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
         }
@@ -194,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
 
     @Override
     public void onHideKeyboard() {
+        Log.d("ON_HIDE_KEYBOARD", "TRUE");
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         View view = getCurrentFocus();
         if (view == null) {

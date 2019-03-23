@@ -65,6 +65,7 @@ public class CreateRoutineFragment extends Fragment {
 
         if (context instanceof DatabaseInterface) {
             onUpdateListener = (DatabaseInterface) context;
+            Log.d("DBI_CRF", onUpdateListener.toString());
         } else {
             throw new RuntimeException(context.toString() + "must implement DatabaseInterface");
         }

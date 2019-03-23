@@ -30,7 +30,8 @@ public class RoutineListAdapter extends RecyclerView.Adapter<ItemAdapter.ItemVie
     @NonNull
     @Override
     public ItemAdapter.ItemViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LinearLayout v = (LinearLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sample_exercise_text_view, viewGroup, false);
+        LinearLayout v = (LinearLayout) LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.sample_exercise_text_view, viewGroup, false);
         return new ItemAdapter.ItemViewHolder(v);
     }
 
@@ -45,7 +46,11 @@ public class RoutineListAdapter extends RecyclerView.Adapter<ItemAdapter.ItemVie
                 Log.d("KEY", key);
 
                 FragmentManager fm = parentFragment.getChildFragmentManager();
-                fm.beginTransaction().add(R.id.frameLayout, WorkoutOverviewFragment.newInstance(key)).commit();
+                fm.popBackStackImmediate();
+                fm.beginTransaction()
+                        .replace(R.id.frameLayout, WorkoutOverviewFragment.newInstance(key))
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }

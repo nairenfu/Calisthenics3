@@ -62,12 +62,8 @@ public class EditRoutineFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                onUpdateListener.onHideKeyboard();
                 addRoutine(currentId, setName.getText().toString());
-                try {
-                    onUpdateListener.onHideKeyboard();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
@@ -80,6 +76,7 @@ public class EditRoutineFragment extends Fragment {
 
         if (context instanceof DatabaseInterface) {
             onUpdateListener = (DatabaseInterface) context;
+            Log.d("DBI_ERF", onUpdateListener.toString());
         } else {
             throw new RuntimeException(context.toString() + "must implement DatabaseInterface");
         }

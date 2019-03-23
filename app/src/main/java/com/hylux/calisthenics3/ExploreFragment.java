@@ -1,6 +1,7 @@
 package com.hylux.calisthenics3;
 
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,6 +24,8 @@ public class ExploreFragment extends Fragment {
 
     private FragmentManager fm;
     private Fragment currentFragment;
+
+    private DatabaseInterface onUpdateListener;
 
     public ExploreFragment() {
     }
@@ -81,6 +84,24 @@ public class ExploreFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof DatabaseInterface) {
+            onUpdateListener = (DatabaseInterface) context;
+            Log.d("DBI_EXPLORE", onUpdateListener.toString());
+        } else {
+            throw new RuntimeException(context.toString() + "must implement DatabaseInterface");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onUpdateListener = null;
+    }
+
     public void updateData() {
         if (fm.getFragments().get(0).getClass() == RoutineListFragment.class) {
             ((RoutineListFragment) currentFragment).updateData();
@@ -93,9 +114,17 @@ public class ExploreFragment extends Fragment {
     public void back() {
         fm.popBackStackImmediate();
         rootLayout.removeView(rootView.findViewById(R.id.editContainer));
+
+        if (currentFragment.getClass() == RoutineListFragment.class) {
+            currentFragment.getChildFragmentManager().popBackStackImmediate();
+        }
     }
 
-    public Fragment getEditFragment() {
-        return fm.findFragmentByTag("CREATE");
+    public CreateRoutineFragment getEditFragment() {
+        return (CreateRoutineFragment) fm.findFragmentByTag("CREATE");
+    }
+
+    public Fragment getCurrentFragment() {
+        return currentFragment;
     }
 }
