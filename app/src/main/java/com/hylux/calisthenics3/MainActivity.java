@@ -1,14 +1,17 @@
 package com.hylux.calisthenics3;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -96,6 +99,14 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
         public int getCount() {
             return numPages;
         }
+
+        public int getNumPages() {
+            return numPages;
+        }
+
+        public void setNumPages(int numPages) {
+            this.numPages = numPages;
+        }
     }
 
     //----------- COLLECTION METHODS -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -107,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Log.d("DB", document.getId() + " => " + document.getData());
+                                Log.d("DB_EXERCISES", document.getId() + " => " + document.getData());
                                 DatabaseInterface.exerciseList.put(document.getId(), new Exercise((HashMap<String, Object>) document.getData()));
                             }
                             try {
@@ -205,5 +216,13 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
             view = new View(getApplicationContext());
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void onWorkoutSelected(String id) {
+        viewPager.setCurrentItem(0);
+        startWorkoutFragment.setCurrentRoutine(id);
+        startWorkoutFragment.setKey((String) DatabaseInterface.routineList.get(id).getRoutine().get(0).keySet().toArray()[0]);
+        startWorkoutFragment.newExerciseBriefFragment();
     }
 }

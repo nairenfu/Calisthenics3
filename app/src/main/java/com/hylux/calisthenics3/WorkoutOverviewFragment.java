@@ -1,15 +1,18 @@
 package com.hylux.calisthenics3;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,7 +40,7 @@ public class WorkoutOverviewFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            key = getArguments().getString("EXTRA_KEY");
+            key = getArguments().getString("EXTRA_ID");
         }
     }
 
@@ -94,16 +97,41 @@ public class WorkoutOverviewFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        //((ExerciseAdapter) adapter).setOnUpdateListener(onUpdateListener);
+
+        Button startWorkoutButton = rootView.findViewById(R.id.startWorkout);
+        startWorkoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onUpdateListener.onWorkoutSelected(key);
+            }
+        });
 
         return rootView;
     }
 
-    public static WorkoutOverviewFragment newInstance(String key) {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof DatabaseInterface) {
+            onUpdateListener = (DatabaseInterface) context;
+            Log.d("DBI_WOF", onUpdateListener.toString());
+        } else {
+            throw new RuntimeException(context.toString() + "must implement DatabaseInterface");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onUpdateListener = null;
+    }
+
+    public static WorkoutOverviewFragment newInstance(String id) {
         WorkoutOverviewFragment fragment = new WorkoutOverviewFragment();
 
         Bundle args = new Bundle();
-        args.putString("EXTRA_KEY", key);
+        args.putString("EXTRA_ID", id);
         fragment.setArguments(args);
 
         return fragment;

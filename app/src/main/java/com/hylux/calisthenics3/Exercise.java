@@ -42,7 +42,7 @@ public class Exercise extends Object {
         this.brief = (String) exercise.get("brief");
         this.equipment = (Long) exercise.get("equipment");
         this.pathToVideo = (String) exercise.get("pathToVideo");
-        this.pathsToImages = (ArrayList<String>) exercise.get("pathToImages");
+        this.pathsToImages = (ArrayList<String>) exercise.get("pathsToImages");
     }
 
     public String getName() {
