@@ -18,6 +18,9 @@ public class StartWorkoutFragment extends Fragment {
 
     private FragmentManager fm;
     private ExerciseBriefFragment exerciseBriefFragment;
+    private WorkoutOverviewFragment workoutOverviewFragment;
+
+    private View rootView;
 
     public StartWorkoutFragment() {
     }
@@ -28,8 +31,24 @@ public class StartWorkoutFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         fm = getChildFragmentManager();
+        rootView = inflater.inflate(R.layout.fragment_start_workout, container, false);
 
-        return inflater.inflate(R.layout.fragment_start_workout, container, false);
+        return rootView;
+    }
+
+    public void clear() {
+        if (workoutOverviewFragment != null) {
+            fm.beginTransaction().remove(workoutOverviewFragment).commit();
+        }
+        ((ViewGroup) rootView).removeAllViews();
+    }
+
+    public boolean back() {
+        if (workoutOverviewFragment != null) {
+            return workoutOverviewFragment.back();
+        }
+
+        return false;
     }
 
     public String getKey() {
@@ -65,6 +84,18 @@ public class StartWorkoutFragment extends Fragment {
         if (exerciseBriefFragment == null) {
             exerciseBriefFragment = ExerciseBriefFragment.newInstance(key);
             fm.beginTransaction().add(R.id.startWorkoutFragment, exerciseBriefFragment, "ebf").commit();
+        }
+    }
+
+    public WorkoutOverviewFragment getWorkoutOverviewFragment() {
+        return workoutOverviewFragment;
+    }
+
+    public void newWorkoutOverviewFragment(String id) {
+        workoutOverviewFragment = (WorkoutOverviewFragment) fm.findFragmentByTag("wof");
+        if (workoutOverviewFragment == null) {
+            workoutOverviewFragment = WorkoutOverviewFragment.newInstance(id);
+            fm.beginTransaction().add(R.id.startWorkoutFragment, workoutOverviewFragment, "wof").commit();
         }
     }
 }

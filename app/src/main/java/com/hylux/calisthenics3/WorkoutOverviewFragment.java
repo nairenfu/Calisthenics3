@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,6 +29,8 @@ public class WorkoutOverviewFragment extends Fragment {
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
+    private FragmentManager fm;
+
     private DatabaseInterface onUpdateListener;
 
     private String key;
@@ -48,6 +51,8 @@ public class WorkoutOverviewFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_workout_overview, container, false);
+
+        fm = getChildFragmentManager();
 
         Routine currentRoutine = DatabaseInterface.routineList.get(key);
 
@@ -76,9 +81,21 @@ public class WorkoutOverviewFragment extends Fragment {
             public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
                 TextView nameView = new TextView(getContext());
-                String key = new ArrayList<>(routine.get(i).keySet()).get(0);
+                final String key = new ArrayList<>(routine.get(i).keySet()).get(0);
                 String name = DatabaseInterface.exerciseList.get(key).getName();
                 nameView.setText(name);
+                nameView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d("CLICKED", key);
+                        ExerciseBriefFragment exerciseBriefFragment = ExerciseBriefFragment.newInstance(key);
+                        fm
+                                .beginTransaction()
+                                .add(R.id.exerciseBriefContainer, exerciseBriefFragment, "ebf")
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                });
 
                 return new RecyclerView.ViewHolder(nameView) {
                 };
@@ -125,6 +142,11 @@ public class WorkoutOverviewFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         onUpdateListener = null;
+    }
+
+    public boolean back() {
+        Log.d("Back", String.valueOf(fm.getBackStackEntryCount()));
+        return fm.popBackStackImmediate();
     }
 
     public static WorkoutOverviewFragment newInstance(String id) {

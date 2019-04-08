@@ -33,6 +33,10 @@ public class StateViewPager extends ViewPager {
         return false;
     }
 
+    public boolean isPagingEnabled() {
+        return enabled;
+    }
+
     public void setPagingEnabled(boolean enabled) {
         this.enabled = enabled;
     }

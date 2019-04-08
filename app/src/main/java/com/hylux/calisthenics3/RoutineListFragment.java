@@ -1,6 +1,7 @@
 package com.hylux.calisthenics3;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,11 +20,11 @@ import java.util.ArrayList;
 
 public class RoutineListFragment extends Fragment {
 
-    //TODO left off here
-
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    private DatabaseInterface onUpdateListener;
 
     private ArrayList<String> keyList;
 
@@ -51,9 +52,28 @@ public class RoutineListFragment extends Fragment {
 
         adapter = new RoutineListAdapter(this, DatabaseInterface.routineList);
         recyclerView.setAdapter(adapter);
+        ((RoutineListAdapter) adapter).setOnUpdateListener(onUpdateListener);
         adapter.notifyDataSetChanged();
 
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof DatabaseInterface) {
+            onUpdateListener = (DatabaseInterface) context;
+            Log.d("DBI_WOF", onUpdateListener.toString());
+        } else {
+            throw new RuntimeException(context.toString() + "must implement DatabaseInterface");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onUpdateListener = null;
     }
 
     public void updateData() {

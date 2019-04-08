@@ -25,5 +25,6 @@ public interface DatabaseInterface {
     void onExerciseSelected(String id);
     void onRoutineAdded(String id, String name, ArrayList<HashMap<String, Integer>> routine);
     void onHideKeyboard();
+    void onRoutineSelected(String id);
     void onWorkoutSelected(String id);
 }

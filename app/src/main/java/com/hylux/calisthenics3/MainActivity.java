@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -60,8 +61,21 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
     public void onBackPressed() {
         Log.d("FRAGMENTS", fm.getFragments().toString());
         fm.popBackStackImmediate();
-        if (viewPager.getCurrentItem() == 1) {
+        if (viewPager.getCurrentItem() == 0) {
+            Log.d("EXPLORE", exploreFragment.toString());
             exploreFragment.back();
+        }
+
+        if (viewPager.getCurrentItem() > 0) {
+            if (viewPager.isPagingEnabled()) {
+                if (!startWorkoutFragment.back()) {
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() - 1, true);
+                    startWorkoutFragment.clear();
+                }
+            } else {
+                Toast.makeText(this, "Press back again to quit", Toast.LENGTH_SHORT).show();
+                viewPager.setPagingEnabled(true);
+            }
         }
     }
 
@@ -76,20 +90,20 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    startWorkoutFragment = (StartWorkoutFragment) fm.findFragmentByTag(
-                            "android:switcher:" + R.id.mainActivity + ":" + 0);
-                    if (fm.findFragmentByTag("android:switcher:" + R.id.mainActivity + ":" + 0) == null) {
-                        startWorkoutFragment = new StartWorkoutFragment();
-                    }
-                    return startWorkoutFragment;
-
-                case 1:
                     exploreFragment = (ExploreFragment) fm.findFragmentByTag(
                             "android:switcher:" + R.id.mainActivity + ":" + 1);
                     if (fm.findFragmentByTag("android:switcher:" + R.id.mainActivity + ":" + 1) == null) {
                         exploreFragment = new ExploreFragment();
                     }
                     return exploreFragment;
+
+                case 1:
+                    startWorkoutFragment = (StartWorkoutFragment) fm.findFragmentByTag(
+                            "android:switcher:" + R.id.mainActivity + ":" + 0);
+                    if (fm.findFragmentByTag("android:switcher:" + R.id.mainActivity + ":" + 0) == null) {
+                        startWorkoutFragment = new StartWorkoutFragment();
+                    }
+                    return startWorkoutFragment;
 
                 default:
                     return null;
@@ -220,11 +234,19 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
     }
 
     @Override
+    public void onRoutineSelected(String id) {
+        Log.d("ON_WORKOUT_SELECTED", "CALLED");
+        viewPager.setCurrentItem(1);
+        startWorkoutFragment.setCurrentRoutine(id);
+        startWorkoutFragment.clear();
+        startWorkoutFragment.newWorkoutOverviewFragment(id);
+    }
+
+    @Override
     public void onWorkoutSelected(String id) {
-        viewPager.setCurrentItem(0);
         viewPager.setPagingEnabled(false);
         startWorkoutFragment.setCurrentRoutine(id);
-        startWorkoutFragment.setKey((String) DatabaseInterface.routineList.get(id).getRoutine().get(0).keySet().toArray()[0]);
+        startWorkoutFragment.setKey((String) DatabaseInterface.routineList.get(id).getRoutine().get(0).keySet().toArray()[0]); //Get exercise id
         startWorkoutFragment.newExerciseBriefFragment();
     }
 }

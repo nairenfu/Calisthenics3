@@ -18,6 +18,8 @@ public class RoutineListAdapter extends RecyclerView.Adapter<ItemAdapter.ItemVie
 
     Fragment parentFragment;
 
+    private DatabaseInterface onUpdateListener;
+
     private HashMap<String, Routine> dataSet;
     private ArrayList<String> keyList;
 
@@ -45,12 +47,13 @@ public class RoutineListAdapter extends RecyclerView.Adapter<ItemAdapter.ItemVie
                 Log.d("POSITION", String.valueOf(itemViewHolder.getAdapterPosition()));
                 Log.d("KEY", key);
 
-                FragmentManager fm = parentFragment.getChildFragmentManager();
+                /*FragmentManager fm = parentFragment.getChildFragmentManager();
                 fm.popBackStackImmediate();
                 fm.beginTransaction()
                         .replace(R.id.frameLayout, WorkoutOverviewFragment.newInstance(key))
                         .addToBackStack(null)
-                        .commit();
+                        .commit();*/
+                onUpdateListener.onRoutineSelected(key);
             }
         });
     }
@@ -80,5 +83,13 @@ public class RoutineListAdapter extends RecyclerView.Adapter<ItemAdapter.ItemVie
 
     public void setKeyList(ArrayList<String> keyList) {
         this.keyList = keyList;
+    }
+
+    public DatabaseInterface getOnUpdateListener() {
+        return onUpdateListener;
+    }
+
+    public void setOnUpdateListener(DatabaseInterface onUpdateListener) {
+        this.onUpdateListener = onUpdateListener;
     }
 }
