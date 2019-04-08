@@ -1,10 +1,6 @@
 package com.hylux.calisthenics3;
 
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,16 +18,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class ExerciseBriefFragment extends Fragment {
 
@@ -110,9 +99,9 @@ public class ExerciseBriefFragment extends Fragment {
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             ImageView imageView = new ImageView(getContext());
-            new GetImageBitmapTask(imageView).execute(imagePaths.get(position).toString());
+            Picasso.get().load(imagePaths.get(position)).into(imageView);
 
-
+            container.addView(imageView);
             return imageView;
         }
     }
@@ -125,36 +114,5 @@ public class ExerciseBriefFragment extends Fragment {
         fragment.setArguments(args);
 
         return fragment;
-    }
-
-    static class GetImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
-
-        Bitmap bm = null;
-        ImageView imageView;
-
-        public GetImageBitmapTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            try {
-                URL aURL = new URL(urls[0]);
-                URLConnection conn = aURL.openConnection();
-                conn.connect();
-                InputStream is = conn.getInputStream();
-                BufferedInputStream bis = new BufferedInputStream(is);
-                bm = BitmapFactory.decodeStream(bis);
-                bis.close();
-                is.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Error getting bitmap", e);
-            }
-            return bm;
-        }
-
-        protected void onPostExecute(Bitmap bm) {
-            imageView.setImageBitmap(bm);
-        }
     }
 }

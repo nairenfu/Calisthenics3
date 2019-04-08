@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
     StartWorkoutFragment startWorkoutFragment;
     ExploreFragment exploreFragment;
     FragmentManager fm;
-    ViewPager viewPager;
+    StateViewPager viewPager;
     ScrollingPagerAdapter pagerAdapter;
 
     @Override
@@ -221,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseInterface
     @Override
     public void onWorkoutSelected(String id) {
         viewPager.setCurrentItem(0);
+        viewPager.setPagingEnabled(false);
         startWorkoutFragment.setCurrentRoutine(id);
         startWorkoutFragment.setKey((String) DatabaseInterface.routineList.get(id).getRoutine().get(0).keySet().toArray()[0]);
         startWorkoutFragment.newExerciseBriefFragment();
